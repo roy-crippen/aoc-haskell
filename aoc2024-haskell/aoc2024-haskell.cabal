@@ -23,10 +23,12 @@ library
         TemplateHaskell
     exposed-modules:
         Day01,
+        Day99,
         Util
     hs-source-dirs:
         lib,
-        lib/day01
+        lib/day01,
+        lib/day99,
     default-language: GHC2021
     build-depends:
         base ^>= 4.18,
