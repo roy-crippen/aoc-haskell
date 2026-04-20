@@ -8,6 +8,7 @@ import Data.ByteString.Char8 qualified as BS8
 import Data.List (foldl')
 import Data.Text qualified as T
 import Data.Text.Read qualified as TR
+import Data.Word (Word8)
 import System.IO.Unsafe (unsafePerformIO)
 
 data Solution a = MkSolution
@@ -31,9 +32,11 @@ readFileUnsafe path = unsafePerformIO $ do BS.readFile path
 {-# NOINLINE readFileUnsafe #-}
 
 parseBs8IntUnsafe :: BS8.ByteString -> Int
-parseBs8IntUnsafe s = case BS8.readInt s of
-  Just (n, _) -> n
-  Nothing -> error $ "Cannot parse as Int: " ++ show s
+parseBs8IntUnsafe s = fromIntegral $ BS.foldl' go 0 s
+  where
+    go :: Int -> Word8 -> Int
+    go acc w = acc * 10 + fromIntegral (w - 48)
+{-# INLINE parseBs8IntUnsafe #-}
 
 parseNumUnsafe :: (Integral a) => T.Text -> a
 parseNumUnsafe s = case TR.signed TR.decimal $ T.strip s of
