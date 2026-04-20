@@ -7,7 +7,7 @@ import Data.ByteString.Char8 qualified as BS8
 import Data.FileEmbed (embedFile)
 import Data.IntMap.Strict qualified as IntMap
 import Data.Vector.Algorithms.Intro qualified as VA
-import Data.Vector.Unboxed qualified as V
+import Data.Vector.Unboxed qualified as VU
 import GHC.Generics (Generic)
 import Util (Solution (..), parseBs8IntUnsafe)
 
@@ -31,7 +31,7 @@ expectedP2 = 24941624
 #endif
 
 -- | parsed context for both parts
-data Ctx = MkCtx {xs, ys :: V.Vector Int}
+data Ctx = MkCtx {xs, ys :: VU.Vector Int}
   deriving (Generic, Show)
 
 instance NFData Ctx
@@ -56,8 +56,8 @@ solutionDay01 =
 parse :: BS8.ByteString -> Ctx
 parse !input =
   MkCtx
-    { xs = V.fromListN n lefts,
-      ys = V.fromListN n rights
+    { xs = VU.fromListN n lefts,
+      ys = VU.fromListN n rights
     }
   where
     !ls = BS8.lines (BS8.strip input)
@@ -80,22 +80,22 @@ part1 = solve . sortVectors
 sortVectors :: Ctx -> Ctx
 sortVectors ctx =
   MkCtx
-    { xs = V.modify VA.sort ctx.xs,
-      ys = V.modify VA.sort ctx.ys
+    { xs = VU.modify VA.sort ctx.xs,
+      ys = VU.modify VA.sort ctx.ys
     }
 
 solve :: Ctx -> Int
 solve ctx =
-  V.sum $ V.zipWith (\x y -> abs (x - y)) ctx.xs ctx.ys
+  VU.sum $ VU.zipWith (\x y -> abs (x - y)) ctx.xs ctx.ys
 
 -- ------
 -- part 2
 -- ------
 
-buildFreq :: V.Vector Int -> IntMap.IntMap Int
-buildFreq = V.foldl' (\m v -> IntMap.insertWith (+) v 1 m) IntMap.empty
-
 part2 :: Ctx -> Int
-part2 ctx = V.foldl' f 0 ctx.xs
+part2 ctx = VU.foldl' f 0 ctx.xs
   where
     f acc x = acc + x * IntMap.findWithDefault 0 x (buildFreq ctx.ys)
+
+buildFreq :: VU.Vector Int -> IntMap.IntMap Int
+buildFreq = VU.foldl' (\m v -> IntMap.insertWith (+) v 1 m) IntMap.empty
