@@ -3,6 +3,7 @@ import Control.Exception (evaluate)
 import Control.Monad (foldM)
 import Data.Time.Clock (diffUTCTime, getCurrentTime)
 import Day01 (solutionDay01)
+import Day02 (solutionDay02)
 import Day99 (solutionDay99)
 -- ...
 
@@ -12,6 +13,7 @@ import Util (Solution (..), SomeSolution (..))
 solutions :: [SomeSolution]
 solutions =
   [ MkSomeSolution solutionDay01,
+    MkSomeSolution solutionDay02,
     MkSomeSolution solutionDay99
     -- ...
   ]

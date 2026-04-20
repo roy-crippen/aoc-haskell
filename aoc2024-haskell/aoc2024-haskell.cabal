@@ -23,11 +23,13 @@ library
         TemplateHaskell
     exposed-modules:
         Day01,
+        Day02,
         Day99,
         Util
     hs-source-dirs:
         lib,
         lib/day01,
+        lib/day02,
         lib/day99,
     default-language: GHC2021
     build-depends:
@@ -51,7 +53,8 @@ library
 
 executable aoc2024-haskell
     import:           warnings
-    ghc-options:      -O2 -threaded -rtsopts -with-rtsopts=-N
+    -- ghc-options:      -O2 -threaded -rtsopts -with-rtsopts=-N
+    ghc-options:      -O2 
     main-is:          Main.hs
     hs-source-dirs:   app
     default-language: GHC2021
