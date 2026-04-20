@@ -60,7 +60,7 @@ parse s = MkCtx {xss = map parseLine (BS8.lines s)}
 parseLine :: BS8.ByteString -> VU.Vector Int
 parseLine bs
   | BS8.null bs = VU.empty
-  | otherwise = VU.fromListN 10 (go bs)
+  | otherwise = VU.fromList (go bs)
   where
     go :: BS8.ByteString -> [Int]
     go s
