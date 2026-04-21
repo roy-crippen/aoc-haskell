@@ -14,7 +14,7 @@ import Util (Solution (..), parseBs8IntUnsafe)
 -- | embedded puzzle input
 #if EXAMPLE
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day01/example.txt")
+inputBs = $(embedFile "data/day01/example.txt")
 
 expectedP1,  expectedP2:: Int
 expectedP1 = 11
@@ -22,7 +22,7 @@ expectedP2 = 31
 
 #else
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day01/input.txt")
+inputBs = $(embedFile "data/day01/input.txt")
 
 expectedP1,  expectedP2:: Int
 expectedP1 = 2086478

@@ -11,7 +11,7 @@ import Util (Solution (..))
 -- | embedded puzzle input
 #if EXAMPLE
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day99/example.txt")
+inputBs = $(embedFile "data/day99/example.txt")
 
 expectedP1,  expectedP2:: Int
 expectedP1 = 42
@@ -19,7 +19,7 @@ expectedP2 = 42
 
 #else
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day99/input.txt")
+inputBs = $(embedFile "data/day99/input.txt")
 
 expectedP1,  expectedP2:: Int
 expectedP1 = 42

@@ -7,9 +7,19 @@ author:             roycrippen
 maintainer:         roycrippen@gmail.com
 build-type:         Simple
 
+-- Common settings
 common warnings
     ghc-options:    -Wall
 
+common exe-common
+    import:           warnings
+    ghc-options:      -O2 -threaded -rtsopts -with-rtsopts=-N
+    default-language: GHC2021
+    build-depends:
+        base ^>= 4.18,
+        aoc2024-haskell
+
+-- Library
 library
     import:           warnings
     ghc-options:      -O2
@@ -27,41 +37,28 @@ library
         Day99,
         Util
     hs-source-dirs:
-        lib,
-        lib/day01,
-        lib/day02,
-        lib/day99,
+        lib
     default-language: GHC2021
     build-depends:
         base ^>= 4.18,
         bytestring,
         containers,
-        -- data-memocombinators,
         deepseq,
-        -- dlist,
         file-embed,
-        -- hashable,
-        -- memoize,
         parallel,
-        -- regex-posix,
         template-haskell,
         text,
-        -- unordered-containers,
-        vector,
         vector-algorithms,
+        vector,
 
-
+-- Executable (now in root app/ folder next to .cabal file)
 executable aoc2024-haskell
-    import:           warnings
-    -- ghc-options:      -O2 -threaded -rtsopts -with-rtsopts=-N
-    ghc-options:      -O2 
+    import:           exe-common
     main-is:          Main.hs
     hs-source-dirs:   app
-    default-language: GHC2021
     default-extensions:
         RecordWildCards
     build-depends:
-        base ^>= 4.18,
-        aoc2024-haskell,
+        deepseq,        
+        optparse-applicative,
         time,
-        deepseq,

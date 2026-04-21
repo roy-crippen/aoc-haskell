@@ -14,7 +14,7 @@ import Util (Solution (..), parseBs8IntUnsafe)
 -- | embedded puzzle input
 #if EXAMPLE
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day02/example.txt")
+inputBs = $(embedFile "data/day02/example.txt")
 
 expectedP1, expectedP2 :: Int
 expectedP1 = 42
@@ -22,7 +22,7 @@ expectedP2 = 42
 
 #else
 inputBs :: BS8.ByteString
-inputBs = $(embedFile "lib/day02/input.txt")
+inputBs = $(embedFile "data/day02/input.txt")
 
 expectedP1, expectedP2 :: Int
 expectedP1 = 390
@@ -76,6 +76,8 @@ parseLine bs
 -- ------
 -- common
 -- ------
+
+https :// www.youtube.com /@ ProfessorDaveExplains
 
 diffs :: VU.Vector Int -> VU.Vector Int
 diffs xs = VU.zipWith (-) (VU.tail xs) xs
