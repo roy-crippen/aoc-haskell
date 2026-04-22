@@ -6,31 +6,37 @@ import Data.Ord (comparing)
 import Data.Time.Clock (diffUTCTime, getCurrentTime)
 import Day01 (solutionDay01)
 import Day02 (solutionDay02)
+import Day03 (solutionDay03)
 import Day99 (solutionDay99)
 import Options.Applicative
--- ... import other days as needed
-
 import Text.Printf (printf)
 import Util (Solution (..), SomeSolution (..))
 
--- Colors matching your Roc definitions
+-- colors
 blue, green, yellow, reset :: String
 blue = "\ESC[0;34m"
 green = "\ESC[38;5;46m"
 yellow = "\ESC[38;5;226m"
 reset = "\ESC[0m"
 
+-- ... existing imports and color definitions ...
+
 solutions :: [SomeSolution]
 solutions =
   [ MkSomeSolution solutionDay01,
     MkSomeSolution solutionDay02,
+    MkSomeSolution solutionDay03,
     MkSomeSolution solutionDay99
-    -- ...
   ]
 
 data Options = Options
   { optDay :: Maybe Int,
     optBest :: Bool
+  }
+
+data Results = MkResults
+  { tParse, tP1, tP2, tTotal :: Double,
+    vP1, vP2 :: Int
   }
 
 optionsParser :: Parser Options
@@ -83,77 +89,61 @@ main = do
       ++ green
       ++ formatTotal totalTime
       ++ reset
-  where
-    matchesDay :: Int -> SomeSolution -> Bool
-    matchesDay target (MkSomeSolution MkSolution {day}) = day == target
 
-    runSolution :: Bool -> Double -> SomeSolution -> IO Double
-    runSolution useBest acc sol = do
-      runs <-
-        if useBest
-          then replicateM 10 (timeOneRun sol)
-          else (: []) <$> timeOneRun sol
+matchesDay :: Int -> SomeSolution -> Bool
+matchesDay target (MkSomeSolution MkSolution {day}) = day == target
 
-      let bestTotal = minimumBy (comparing fifth) runs
-          bestParse = third bestTotal
-          bestP1 = fourth bestTotal
-          bestP2 = fifth bestTotal -- wait, indexing fixed below
-      let v1 = solvePart1Result sol
-          v2 = solvePart2Result sol
+runSolution :: Bool -> Double -> SomeSolution -> IO Double
+runSolution useBest acc someSolution@(MkSomeSolution sol) = do
+  runs <-
+    if useBest
+      then replicateM 10 (timeOneRun someSolution)
+      else (: []) <$> timeOneRun someSolution
 
-      putStrLn $
-        formatRow
-          (getDay sol)
-          bestParse
-          bestP1
-          bestP2
-          (fifth bestTotal)
-          v1
-          v2
-          (getExpected1 sol)
-          (getExpected2 sol)
+  let best = minimumBy (comparing (.tTotal)) runs
 
-      return (acc + fifth bestTotal)
+  putStrLn $
+    formatRow
+      sol.day
+      best.tParse
+      best.tP1
+      best.tP2
+      best.tTotal
+      best.vP1
+      best.vP2
+      sol.expectedPart1
+      sol.expectedPart2
 
-    -- Time one full run: returns (total, parse, p1, p2)
-    timeOneRun :: SomeSolution -> IO (Double, Double, Double, Double)
-    timeOneRun (MkSomeSolution MkSolution {parseInput, solvePart1, solvePart2, inputBytes}) = do
-      t0 <- getCurrentTime
-      ctx <- evaluate $ force $ parseInput inputBytes
-      t1 <- getCurrentTime
-      let tParse = realToFrac (diffUTCTime t1 t0) * 1_000_000
+  return (acc + best.tTotal)
 
-      t2 <- getCurrentTime
-      _ <- evaluate $ force $ solvePart1 ctx
-      t3 <- getCurrentTime
-      let t1Time = realToFrac (diffUTCTime t3 t2) * 1_000_000
+timeOneRun :: SomeSolution -> IO Results
+timeOneRun (MkSomeSolution MkSolution {..}) = do
+  t0 <- getCurrentTime
+  ctx <- evaluate $ force $ parseInput inputBytes
+  t1 <- getCurrentTime
+  let tParse = realToFrac (diffUTCTime t1 t0) * 1_000_000
 
-      t4 <- getCurrentTime
-      _ <- evaluate $ force $ solvePart2 ctx
-      t5 <- getCurrentTime
-      let t2Time = realToFrac (diffUTCTime t5 t4) * 1_000_000
+  t2 <- getCurrentTime
+  v1 <- evaluate $ force $ solvePart1 ctx
+  t3 <- getCurrentTime
+  let tP1 = realToFrac (diffUTCTime t3 t2) * 1_000_000
 
-      let tTotal = tParse + t1Time + t2Time
-      return (tTotal, tParse, t1Time, t2Time)
+  t4 <- getCurrentTime
+  v2 <- evaluate $ force $ solvePart2 ctx
+  t5 <- getCurrentTime
+  let tP2 = realToFrac (diffUTCTime t5 t4) * 1_000_000
 
-    -- Field extractors (no shadowing)
-    getDay :: SomeSolution -> Int
-    getDay (MkSomeSolution MkSolution {day}) = day
+  let tTotal = tParse + tP1 + tP2
 
-    getExpected1, getExpected2 :: SomeSolution -> Int
-    getExpected1 (MkSomeSolution MkSolution {expectedPart1}) = expectedPart1
-    getExpected2 (MkSomeSolution MkSolution {expectedPart2}) = expectedPart2
-
-    solvePart1Result, solvePart2Result :: SomeSolution -> Int
-    solvePart1Result (MkSomeSolution MkSolution {parseInput, solvePart1, inputBytes}) =
-      solvePart1 (parseInput inputBytes)
-    solvePart2Result (MkSomeSolution MkSolution {parseInput, solvePart2, inputBytes}) =
-      solvePart2 (parseInput inputBytes)
-
-    -- Tuple helpers
-    fifth (_, _, _, x) = x
-    third (_, x, _, _) = x
-    fourth (_, _, x, _) = x
+  return
+    MkResults
+      { tParse = tParse,
+        tP1 = tP1,
+        tP2 = tP2,
+        tTotal = tTotal,
+        vP1 = v1,
+        vP2 = v2
+      }
 
 padTime :: Double -> String
 padTime micros =
@@ -162,14 +152,14 @@ padTime micros =
    in col ++ printf "%8.2f" ms ++ "ms" ++ reset
 
 formatRow :: Int -> Double -> Double -> Double -> Double -> Int -> Int -> Int -> Int -> String
-formatRow day tParse t1 t2 tTotal v1 v2 exp1 exp2 =
+formatRow day tParse tP1 tP2 tTotal v1 v2 exp1 exp2 =
   dayStr
     ++ "  |"
     ++ padTime tParse
     ++ "  "
-    ++ padTime t1
+    ++ padTime tP1
     ++ "  "
-    ++ padTime t2
+    ++ padTime tP2
     ++ "  "
     ++ padTime tTotal
     ++ errorInfo
