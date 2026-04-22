@@ -77,8 +77,6 @@ parseLine bs
 -- common
 -- ------
 
-https :// www.youtube.com /@ ProfessorDaveExplains
-
 diffs :: VU.Vector Int -> VU.Vector Int
 diffs xs = VU.zipWith (-) (VU.tail xs) xs
 {-# INLINE diffs #-}

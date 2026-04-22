@@ -54,13 +54,13 @@ solutionDay01 =
 -- -------
 
 parse :: BS8.ByteString -> Ctx
-parse !input =
+parse bs =
   MkCtx
     { xs = VU.fromListN n lefts,
       ys = VU.fromListN n rights
     }
   where
-    !ls = BS8.lines (BS8.strip input)
+    !ls = BS8.lines (BS8.strip bs)
     n = length ls
     (lefts, rights) = unzip (map parsePair ls)
 

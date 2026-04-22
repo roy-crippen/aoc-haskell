@@ -34,6 +34,7 @@ library
     exposed-modules:
         Day01,
         Day02,
+        Day03,
         Day99,
         Util
     hs-source-dirs:
@@ -58,6 +59,7 @@ executable aoc2024-haskell
     hs-source-dirs:   app
     default-extensions:
         RecordWildCards
+        OverloadedRecordDot
     build-depends:
         deepseq,        
         optparse-applicative,
