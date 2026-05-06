@@ -19,7 +19,6 @@ common exe-common
         base ^>= 4.18,
         aoc2024-haskell
 
--- Library
 library
     import:           warnings
     ghc-options:      -O2
@@ -32,10 +31,13 @@ library
         RecordWildCards
         TemplateHaskell
     exposed-modules:
+        Aaa,
         Day01,
         Day02,
         Day03,
+        Day04,
         Day99,
+        Grid,
         Util
     hs-source-dirs:
         lib
@@ -46,21 +48,33 @@ library
         containers,
         deepseq,
         file-embed,
+        massiv ^>= 1.0, 
         parallel,
         template-haskell,
         text,
         vector-algorithms,
         vector,
 
--- Executable (now in root app/ folder next to .cabal file)
 executable aoc2024-haskell
     import:           exe-common
     main-is:          Main.hs
     hs-source-dirs:   app
-    default-extensions:
-        RecordWildCards
-        OverloadedRecordDot
     build-depends:
         deepseq,        
         optparse-applicative,
         time,
+
+test-suite grid-tests
+  type:               exitcode-stdio-1.0
+  main-is:            GridTest.hs
+  hs-source-dirs:     test
+  default-language:   Haskell2010
+  ghc-options:        -threaded -rtsopts -with-rtsopts=-N
+
+  build-depends:
+      base
+    , aoc2024-haskell
+    , tasty
+    , tasty-hunit
+    , bytestring
+    , massiv ^>= 1.0
