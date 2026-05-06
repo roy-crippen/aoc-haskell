@@ -1,3 +1,6 @@
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE RecordWildCards #-}
+
 import Control.DeepSeq (force)
 import Control.Exception (evaluate)
 import Control.Monad (foldM, replicateM)
@@ -7,6 +10,7 @@ import Data.Time.Clock (diffUTCTime, getCurrentTime)
 import Day01 (solutionDay01)
 import Day02 (solutionDay02)
 import Day03 (solutionDay03)
+import Day04 (solutionDay04)
 import Day99 (solutionDay99)
 import Options.Applicative
 import Text.Printf (printf)
@@ -26,6 +30,7 @@ solutions =
   [ MkSomeSolution solutionDay01,
     MkSomeSolution solutionDay02,
     MkSomeSolution solutionDay03,
+    MkSomeSolution solutionDay04,
     MkSomeSolution solutionDay99
   ]
 
