@@ -6,6 +6,7 @@ import Control.DeepSeq (NFData)
 import Data.ByteString.Char8 qualified as BS8
 import Data.FileEmbed (embedFile)
 import Data.List (foldl')
+import Data.Word (Word8)
 import GHC.Generics (Generic)
 import Grid qualified as G
 import Util (Solution (..))
@@ -67,10 +68,11 @@ parse bs = MkCtx {grid = G.fromByteStringPadded rows cols 3 '$' bs}
 -- common
 -- ------
 
--- 'X' = 88
--- 'M' = 77
--- 'A' = 65
--- 'S' = 83
+x, m, s, a :: Word8
+x = 88 -- 'X'
+m = 77 -- 'M'
+s = 83 -- 'S'
+a = 65 -- 'A'
 
 -- ------
 -- part 1
@@ -80,10 +82,10 @@ part1 :: Ctx -> Int
 part1 ctx = foldl' (\acc pos -> acc + countXmas ctx.grid pos) 0 (findXs ctx.grid)
 
 findXs :: G.Grid -> [G.Pos]
-findXs = G.findPositions (== 88)
+findXs = G.findPositions (== x)
 
 isXmas :: G.Grid -> G.Pos -> G.Direction -> Bool
-isXmas g (r, c) (dr, dc) = w3 == 83 && w2 == 65 && w1 == 77 -- 'S' 'A' 'M'
+isXmas g (r, c) (dr, dc) = w3 == s && w2 == a && w1 == m -- 'S' 'A' 'M'
   where
     w1 = G.unsafeLookupGrid g (r + dr, c + dc)
     w2 = G.unsafeLookupGrid g (r + 2 * dr, c + 2 * dc)
@@ -105,4 +107,13 @@ countXmas g pos =
 -- ------
 
 part2 :: Ctx -> Int
-part2 _ = expectedP2
+part2 ctx = foldl' (\acc pos -> acc + xmasCount ctx.grid pos) 0 (G.findPositions (== a) ctx.grid)
+
+isMas :: Word8 -> Word8 -> Bool
+isMas top bot = (top == m && bot == s) || (top == s && bot == m)
+
+xmasCount :: G.Grid -> G.Pos -> Int
+xmasCount g (r, c) = fromEnum $
+  case G.unsafeNeighborsDiag4 g r c of
+    [nw, ne, sw, se] -> isMas nw se && isMas ne sw
+    _ -> False

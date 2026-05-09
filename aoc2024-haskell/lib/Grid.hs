@@ -119,10 +119,10 @@ moveSW (r, c) = (r + 1, c - 1)
 type Direction = (Int, Int)
 
 cardinalDirections :: [Direction]
-cardinalDirections = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+cardinalDirections = [(-1, 0), (1, 0), (0, -1), (0, 1)] -- [n, s, w, e]
 
 diagonalDirections :: [Direction]
-diagonalDirections = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+diagonalDirections = [(-1, -1), (-1, 1), (1, -1), (1, 1)] -- [nw, ne, sw, se]
 
 allDirections :: [Direction]
 allDirections = cardinalDirections ++ diagonalDirections
@@ -156,6 +156,9 @@ neighbors8 g r c =
 
 unsafeNeighbors4 :: Grid -> Int -> Int -> [Word8]
 unsafeNeighbors4 g r c = [unsafeLookupGrid g (r + di, c + dj) | (di, dj) <- cardinalDirections]
+
+unsafeNeighborsDiag4 :: Grid -> Int -> Int -> [Word8]
+unsafeNeighborsDiag4 g r c = [unsafeLookupGrid g (r + di, c + dj) | (di, dj) <- diagonalDirections]
 
 unsafeNeighbors8 :: Grid -> Int -> Int -> [Word8]
 unsafeNeighbors8 g r c = [unsafeLookupGrid g (r + di, c + dj) | (di, dj) <- allDirections]
