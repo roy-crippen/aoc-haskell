@@ -68,21 +68,18 @@ parse bs = MkCtx {grid = G.fromByteStringPadded rows cols 3 '$' bs}
 -- common
 -- ------
 
-x, m, s, a :: Word8
+x, m, a, s :: Word8
 x = 88 -- 'X'
 m = 77 -- 'M'
-s = 83 -- 'S'
 a = 65 -- 'A'
+s = 83 -- 'S'
 
 -- ------
 -- part 1
 -- ------
 
 part1 :: Ctx -> Int
-part1 ctx = foldl' (\acc pos -> acc + countXmas ctx.grid pos) 0 (findXs ctx.grid)
-
-findXs :: G.Grid -> [G.Pos]
-findXs = G.findPositions (== x)
+part1 ctx = foldl' (\acc pos -> acc + countXmas ctx.grid pos) 0 (G.findPositions (== x) ctx.grid)
 
 isXmas :: G.Grid -> G.Pos -> G.Direction -> Bool
 isXmas g (r, c) (dr, dc) = w3 == s && w2 == a && w1 == m -- 'S' 'A' 'M'
